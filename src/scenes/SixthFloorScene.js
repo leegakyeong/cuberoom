@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { playerCreate, playerUpdate } from "../entity/player";
+import { playerCreate, playerUpdate,  playerFollowClickUpdate } from "../entity/player";
 import { allCharacterImageNames } from "../entity/player/image";
 import { playerCreateAnimations } from "../entity/player/animation";
 import { mapCreate, mapCreateOverCharacterLayer } from "../entity/map";
@@ -22,6 +22,8 @@ class SixthFloorScene extends Phaser.Scene {
     this.playerOnMap = null;
     this.x = 16 * 5;
     this.y = 16 * 31;
+    this.destinationX = this.x;
+    this.destinationY = this.y;
     this.socket = window.socket;
     this.players = {};
 
@@ -133,25 +135,41 @@ class SixthFloorScene extends Phaser.Scene {
   }
 
   update(_time, _delta) {
+    // const pointer = this.input.activePointer;
+    // if(pointer.isDown){
+    //   this.player = playerMouseUpdate(this.player,this.input.activePointer, this);
+    //   mapUpdateMousePoint(this.map, this);
+    //   this.playerOnMap = playerOnMapUpdate(
+    //     this.playerOnMap,
+    //     this.player,
+    //     this.map,
+    //     this
+    //   );
+    // }else{
+    //   this.player = playerUpdate(this.player,this.cursors, this);
+    //   mapUpdateMousePoint(this.map, this);
+    //   this.playerOnMap = playerOnMapUpdate(
+    //     this.playerOnMap,
+    //     this.player,
+    //     this.map,
+    //     this
+    //   );
+    // }
+
     const pointer = this.input.activePointer;
+    this.player = playerFollowClickUpdate(this.player, this.destinationX, this.destinationY, this);
+    mapUpdateMousePoint(this.map, this);
+    this.playerOnMap = playerOnMapUpdate(
+      this.playerOnMap,
+      this.player,
+      this.map,
+      this
+    );
+
     if(pointer.isDown){
-      this.player = playerMouseUpdate(this.player,this.input.activePointer, this);
-      mapUpdateMousePoint(this.map, this);
-      this.playerOnMap = playerOnMapUpdate(
-        this.playerOnMap,
-        this.player,
-        this.map,
-        this
-      );
-    }else{
-      this.player = playerUpdate(this.player,this.cursors, this);
-      mapUpdateMousePoint(this.map, this);
-      this.playerOnMap = playerOnMapUpdate(
-        this.playerOnMap,
-        this.player,
-        this.map,
-        this
-      );
+      this.destinationX = this.input.activePointer.worldX;
+      this.destinationY = this.input.activePointer.worldY;
+
     }
 
     this.socket.emit('movePlayer', {

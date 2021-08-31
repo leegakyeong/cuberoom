@@ -166,3 +166,79 @@ export function updateMouseAnimation(player, pointer) {
     prevAnim: newPrevAnim,
   };
 }
+
+export function updateFollowClickAnimation(player, destinationX, destinationY) {
+  let newPrevAnim = player.prevAnim;
+
+  if((Math.abs(player.phaser.x -destinationX) < 11 ) && (Math.abs(player.phaser.y-destinationY) < 21 )){
+    if (player.prevAnim === "player-up") {
+      player.phaser.anims.play("player-down-stop", true);
+    } else if (player.prevAnim === "player-down") {
+      player.phaser.anims.play("player-down-stop", true);
+    } else if (player.prevAnim === "player-left") {
+      player.phaser.anims.play("player-left-stop", true);
+    } else if (player.prevAnim === "player-right") {
+      player.phaser.anims.play("player-right-stop", true);
+    } else {
+      player.phaser.anims.stop();
+    }
+  }else{
+    if (destinationX < player.phaser.x ) {
+      if(destinationY < player.phaser.y && ( player.phaser.x -destinationX <= 15) ){
+        player.phaser.anims.play("player-up", true);
+        newPrevAnim = "player-up";
+      }else if(destinationY > player.phaser.y && (player.phaser.x -destinationX <= 15)){
+        player.phaser.anims.play("player-down", true);
+        newPrevAnim = "player-down";
+      }else if(player.prevAnim !== "player-left") {
+        player.phaser.anims.play("player-left", true);
+        newPrevAnim = "player-left";
+      }
+  
+    } else if (destinationX> player.phaser.x) {
+      if(destinationY < player.phaser.y && ( destinationX -player.phaser.x <= 15) ){
+        player.phaser.anims.play("player-up", true);
+        newPrevAnim = "player-up";
+      }else if(destinationY > player.phaser.y && ( destinationX -player.phaser.x <=15)){
+        player.phaser.anims.play("player-down", true);
+        newPrevAnim = "player-down";
+      }else if(player.prevAnim !== "player-right") {
+        player.phaser.anims.play("player-right", true);
+        newPrevAnim = "player-right";
+      }
+    } else if (destinationY < player.phaser.y) {
+      if (player.prevAnim !== "player-up") {
+        player.phaser.anims.play("player-up", true);
+        newPrevAnim = "player-up";
+      }
+    } else if (destinationY > player.phaser.y) {
+      if (player.prevAnim !== "player-down") {
+        player.phaser.anims.play("player-down", true);
+        newPrevAnim = "player-down";
+      }
+    } else {
+      if (player.prevAnim === "player-up") {
+        player.phaser.anims.play("player-up-stop", true);
+      } else if (player.prevAnim === "player-down") {
+        player.phaser.anims.play("player-down-stop", true);
+      } else if (player.prevAnim === "player-left") {
+        player.phaser.anims.play("player-left-stop", true);
+      } else if (player.prevAnim === "player-right") {
+        player.phaser.anims.play("player-right-stop", true);
+      } else {
+        player.phaser.anims.stop();
+      }
+  
+      newPrevAnim = "player-idle";
+    }
+  }
+  
+   
+
+
+
+  return {
+    ...player,
+    prevAnim: newPrevAnim,
+  };
+}
